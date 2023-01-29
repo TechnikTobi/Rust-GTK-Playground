@@ -1,3 +1,5 @@
+use gtk::FileChooserNative;
+use gtk::ResponseType;
 use gtk::prelude::*;
 use gtk::glib;
 use gtk::Application;
@@ -41,20 +43,33 @@ build_ui
 			Some("Cancel"),
 		);
 		file_chooser.set_modal(true);
-		file_chooser.connect_response(glib::clone!(@weak window => move |file_chooser, response| 
-		{
-			if response == gtk::ResponseType::Accept
-			{
-				println!("{:?}", file_chooser.file().unwrap().path().unwrap())
-			}
-			file_chooser.destroy();
-		}));
+
+		// file_chooser.connect_response(handle_file_chooser_selection);
+		file_chooser.connect_response(
+			glib::clone!(
+				@weak window => move |file_chooser, response| handle_file_chooser_selection(file_chooser, response)
+			)
+		);
+		
 		file_chooser.show();
 	}
 	));
 
 	window.present();
+}
 
+fn
+handle_file_chooser_selection
+(
+	file_chooser: &FileChooserNative,
+	response: ResponseType
+)
+{
+	if response == gtk::ResponseType::Accept
+	{
+		println!("{:?}", file_chooser.file().unwrap().path().unwrap())
+	}
+	file_chooser.destroy();
 }
 
 fn main() 
