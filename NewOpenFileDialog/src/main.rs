@@ -41,8 +41,15 @@ build_ui
 			Some("Cancel"),
 		);
 		file_chooser.set_modal(true);
+		file_chooser.connect_response(glib::clone!(@weak window => move |file_chooser, response| 
+		{
+			if response == gtk::ResponseType::Accept
+			{
+				println!("{:?}", file_chooser.file().unwrap().path().unwrap())
+			}
+			file_chooser.destroy();
+		}));
 		file_chooser.show();
-		
 	}
 	));
 
@@ -52,8 +59,6 @@ build_ui
 
 fn main() 
 {
-    println!("Hello, world!");
-
 	let app = Application::builder()
 		.application_id("com.tp.rust.gtk.test.NewOpenFileDialog")
 		.build();
